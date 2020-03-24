@@ -60,14 +60,17 @@ void TileLayer::parse(const pugi::xml_node& node,bool is_infinite)
         attribName = child.name();
         if (attribName == "data")
         {
+
             attribName = child.attribute("encoding").as_string();
             if (attribName == "base64")
             {
-                parseBase64(child);
+                if (!is_infinite) parseBase64(child);
+                
             }
             else if (attribName == "csv")
             {
-                parseCSV(child);
+                if (!is_infinite) parseCSV(child);
+                else parseCVS_infinite(child);
             }
             else
             {
@@ -176,6 +179,12 @@ void TileLayer::parseUnencoded(const pugi::xml_node& node)
     }
 
     createTiles(IDs);
+}
+
+void tmx::TileLayer::parseCVS_infinite(const pugi::xml_node&)
+{
+    std::cout << "WILL PARSE AS INFINITE";
+
 }
 
 void TileLayer::createTiles(const std::vector<std::uint32_t>& IDs)

@@ -180,9 +180,13 @@ namespace tmx
         */
         const std::vector<Property>& getProperties() const { return m_properties; } 
         /*!
+         /brief Returns true if the map is infinite,else returns false
+         */
+        bool getInfinity()const { return m_infinite; }
+        /*!
         \brief Returns a Hashmap of all animated tiles accessible by TileID
         */
-        const std::map<std::uint32_t, Tileset::Tile>& getAnimatedTiles() const { return m_animTiles; }
+         const std::map<std::uint32_t, Tileset::Tile>& getAnimatedTiles() const { return m_animTiles; }
 
 
     private:

@@ -255,11 +255,7 @@ bool Map::load(const std::string& path)
 
      //infinite check
      m_infinite = mapNode.attribute("infinite").as_bool();
-     if (m_infinite)
-     {
-         Logger::log("Infinite maps are not supported yet", Logger::Type::Error);
-         return reset();
-     }
+     
         
   
 

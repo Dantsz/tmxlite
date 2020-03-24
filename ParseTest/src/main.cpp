@@ -87,7 +87,7 @@ int main()
                 }
             }
 
-            if (layer->getType() == tmx::Layer::Type::Tile)
+            if (layer->getType() == tmx::Layer::Type::Tile && map.getInfinity() == false)
             {
                 const auto& tiles = layer->getLayerAs<tmx::TileLayer>();
                 
