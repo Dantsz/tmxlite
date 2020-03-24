@@ -56,8 +56,8 @@ namespace tmx
 
         struct Chunk final
         {
-            std::uint32_t x = 0;
-            std::uint32_t y = 0;
+            std::int32_t x = 0;
+            std::int32_t y = 0;
             std::uint32_t width = 0;
             std::uint32_t height = 0;
             std::vector<Tile> tile_data;

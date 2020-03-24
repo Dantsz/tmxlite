@@ -181,10 +181,22 @@ void TileLayer::parseUnencoded(const pugi::xml_node& node)
     createTiles(IDs);
 }
 
-void tmx::TileLayer::parseCVS_infinite(const pugi::xml_node&)
+void tmx::TileLayer::parseCVS_infinite(const pugi::xml_node& node)
 {
-    std::cout << "WILL PARSE AS INFINITE";
+    std::cout << "Searching for chunks : " << '\n';
+    for (auto child : node.children())
+    {
+        std::string attribName = child.name();
+        if (attribName == "chunk")
+        {
+            std::cout << "Handle Chunk" << '\n';
+            m_chunks.push_back({});
+            Chunk& cur_chunk = m_chunks[m_chunks.size() - 1];
+            cur_chunk.x = child.attribute("x").as_int();
+            std::cout << "x : " << cur_chunk.x << '\n';
 
+        }
+    }
 }
 
 void TileLayer::createTiles(const std::vector<std::uint32_t>& IDs)
