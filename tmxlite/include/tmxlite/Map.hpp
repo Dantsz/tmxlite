@@ -50,7 +50,7 @@ namespace tmx
         Version(std::uint16_t maj = 0, std::uint16_t min = 0)
             : upper(maj), lower(min) {}
     };
-        
+
     enum class Orientation
     {
         Orthogonal,
@@ -78,7 +78,10 @@ namespace tmx
     {
         Even, Odd, None
     };
-
+    enum class Infinity
+    {
+        NotInfinite, Infinite
+    };
     /*!
     \brief Parser for TMX format tile maps.
     This class can be used to parse the XML format tile maps created
@@ -195,6 +198,8 @@ namespace tmx
         StaggerIndex m_staggerIndex;
 
         Colour m_backgroundColour;
+
+        Infinity m_infinite;
 
         std::string m_workingDirectory;
 

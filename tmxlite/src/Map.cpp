@@ -252,6 +252,19 @@ bool Map::load(const std::string& path)
         m_backgroundColour = colourFromString(attribString);
     }
 
+    //Infinity
+    bool infinite = mapNode.attribute("infinite").as_bool();
+    if (infinite)
+    {
+        m_infinite = Infinity::Infinite;
+        Logger::log("Infinite maps are not supported yet",Logger::Type::Error);
+        return reset();
+    }
+    else
+    {
+        m_infinite = Infinity::NotInfinite;
+    }
+
     //TODO do we need next object ID? technically we won't be creating
     //new objects outside of the scene in xygine.
 

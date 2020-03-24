@@ -28,14 +28,16 @@ source distribution.
 #include <tmxlite/Map.hpp>
 #include <tmxlite/ObjectGroup.hpp>
 #include <tmxlite/LayerGroup.hpp>
-
+#include <tmxlite/TileLayer.hpp>
 #include <iostream>
 
 int main()
 {
     tmx::Map map;
+    std::string inf("maps/inf.tmx");
+    std::string fin("maps/fin.tmx");
 
-    if (map.load("maps/platform.tmx"))
+    if (map.load(inf))
     {
         std::cout << "Loaded Map version: " << map.getVersion().upper << ", " << map.getVersion().lower << std::endl;
 
@@ -84,6 +86,25 @@ int main()
                     }
                 }
             }
+
+            if (layer->getType() == tmx::Layer::Type::Tile)
+            {
+                const auto& tiles = layer->getLayerAs<tmx::TileLayer>();
+                
+              
+                for (int i = 0; i < map.getTileCount().y; i++)
+                {
+                    for (int j = 0; j < map.getTileCount().x; j++)
+                    {
+                        std::cout << tiles.getTiles()[i * map.getTileCount().y + j].ID << ' ';
+                    }
+                    std::cout << "\n";
+                }
+
+
+
+            }
+
 
             const auto& properties = layer->getProperties();
             std::cout << properties.size() << " Layer Properties:" << std::endl;
