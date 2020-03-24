@@ -183,17 +183,53 @@ void TileLayer::parseUnencoded(const pugi::xml_node& node)
 
 void tmx::TileLayer::parseCVS_infinite(const pugi::xml_node& node)
 {
+  
     std::cout << "Searching for chunks : " << '\n';
     for (auto child : node.children())
     {
         std::string attribName = child.name();
         if (attribName == "chunk")
         {
-            std::cout << "Handle Chunk" << '\n';
+            Logger::log ("Handle Chunk : \n");
             m_chunks.push_back({});
             Chunk& cur_chunk = m_chunks[m_chunks.size() - 1];
             cur_chunk.x = child.attribute("x").as_int();
-            std::cout << "x : " << cur_chunk.x << '\n';
+            cur_chunk.y = child.attribute("y").as_int();
+            cur_chunk.width = child.attribute("width").as_uint();
+            cur_chunk.height = child.attribute("height").as_uint();
+            Logger::log("x : " + std::to_string(cur_chunk.x) + " y: " + std::to_string(cur_chunk.y) + " w : " + std::to_string(cur_chunk.width) + " h: " + std::to_string(cur_chunk.height) + '\n'); ;
+            std::string data = child.text().as_string();
+         
+
+            std::stringstream dataStream(data);
+            std::uint32_t i;
+            
+            while (dataStream >> i)
+            {
+                //TODO SAME AS THE OTHER FROM TOP
+                static const std::uint32_t mask = 0xf0000000;
+
+                cur_chunk.tile_data.push_back({ i & ~mask ,  ((i & mask) >> 28) });
+
+                if (dataStream.peek() == ',')
+                {
+                    dataStream.ignore();
+                }
+            }
+            Logger::log("Processed chunks : \n");
+            for (int i = 0; i < cur_chunk.height; i++)
+            {
+                std::string line = "";
+                for (int j = 0; j < cur_chunk.width; j++)
+                {
+                   
+                   line += std::to_string(cur_chunk.tile_data[i * cur_chunk.height + j].ID) + ' ';
+                    
+                }
+                Logger::log(line);
+            }
+            
+
 
         }
     }
@@ -212,3 +248,5 @@ void TileLayer::createTiles(const std::vector<std::uint32_t>& IDs)
         m_tiles.back().ID = id & ~mask;
     }
 }
+
+
