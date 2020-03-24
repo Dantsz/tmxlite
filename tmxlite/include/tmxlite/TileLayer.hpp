@@ -97,7 +97,7 @@ namespace tmx
 
         //
         void parseCVS_infinite(const pugi::xml_node&);
-
+        void parseBase64_infinite(const pugi::xml_node&);
         void createTiles(const std::vector<std::uint32_t>&);
     };
 
