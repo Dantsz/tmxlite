@@ -38,6 +38,9 @@ namespace tmx
     class TMXLITE_EXPORT_API TileLayer final : public Layer
     {
     public:
+        
+
+
         /*!
         \brief Tile information for a layer
         */
@@ -46,6 +49,20 @@ namespace tmx
             std::uint32_t ID = 0; //!< Global ID of the tile
             std::uint8_t flipFlags = 0; //!< Flags marking if the tile should be flipped when drawn
         };
+
+        /*!
+        brief Chunk of tiles, used if the map is infinite to store tiles
+        */
+
+        struct Chunk final
+        {
+            std::uint32_t x = 0;
+            std::uint32_t y = 0;
+            std::uint32_t width = 0;
+            std::uint32_t height = 0;
+            std::vector<Tile> tile_data;
+        };
+
 
         /*!
         \brief Flags used to tell if a tile is flipped when drawn
@@ -72,6 +89,8 @@ namespace tmx
         std::vector<Tile> m_tiles;
         std::size_t m_tileCount;
 
+        std::vector<Chunk> m_chunks;//used in case the map is infinite
+
         void parseBase64(const pugi::xml_node&);
         void parseCSV(const pugi::xml_node&);
         void parseUnencoded(const pugi::xml_node&);
@@ -85,6 +104,9 @@ namespace tmx
         assert(getType() == Type::Tile);
         return *dynamic_cast<TileLayer*>(this);
     }
+
+   
+
 }
 
 #endif //TMXLITE_TILE_LAYER_HPP_
