@@ -1,8 +1,12 @@
 tmxlite
 -------
 
-[![Build Status](https://img.shields.io/travis/fallahn/tmxlite.svg?branch=master&label=*nix)](https://travis-ci.org/fallahn/tmxlite)
-[![Build status](https://ci.appveyor.com/api/projects/status/qhhh1geu47uoi2lj/branch/master?svg=true)](https://ci.appveyor.com/project/fallahn/tmxlite/branch/master)
+#### Fork
+This is a version of tmxlite that aims to improve to the original by adding support for some new features of .tmx extension
+New feature:
+ * Parse infinite maps (current goal)
+ 
+
 
 #### Description
 A lightweight C++14 parsing library for tmx map files created with the Tiled map editor. Requires no external linking, all dependencies are included. Supports tmx maps up to 1.0 (see [here](https://doc.mapeditor.org/en/stable/reference/tmx-changelog/#tiled-1-0)) with CSV, zlib and base64 compression. The parser is renderer agnostic, and is cross platform on Windows, linux and OS X. It has also been successfully built for Android too.
