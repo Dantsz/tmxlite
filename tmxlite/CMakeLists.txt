@@ -38,24 +38,38 @@ if(MSVC)
     add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 endif()
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+#include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+
+#include_directories({CMAKE_CURRENT_SOURCE_DIR}/include)
 
 
 #includes the list of source files in the src directory
-SET(PROJECT_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+SET(PROJECT_DIR 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+)
+
 include(${PROJECT_DIR}/CMakeLists.txt)
+
+SET(PROJECT_DIR 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/tmxlite
+)
+
+include(${CMAKE_CURRENT_SOURCE_DIR}/include/tmxlite/CMakeLists.txt)
+
+include_directories(${HEADERSRC})
 
 if(WIN32)
   if(TMXLITE_STATIC_LIB)
-    add_library(${PROJECT_NAME} STATIC ${PROJECT_SRC})
+    add_library(${PROJECT_NAME} STATIC ${PROJECT_SRC} ${HEADERSRC})
   else()
-    add_library(${PROJECT_NAME} SHARED ${PROJECT_SRC})
+    add_library(${PROJECT_NAME} SHARED ${PROJECT_SRC}  ${HEADERSRC})
   endif()   
 else()
   if(TMXLITE_STATIC_LIB)
-    add_library(${PROJECT_NAME} STATIC ${PROJECT_SRC})
+    add_library(${PROJECT_NAME} STATIC ${PROJECT_SRC} ${HEADERSRC} )
   else()
-    add_library(${PROJECT_NAME} SHARED ${PROJECT_SRC})
+    add_library(${PROJECT_NAME} SHARED ${PROJECT_SRC} ${HEADERSRC})
   endif()
 endif()
 

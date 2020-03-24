@@ -1,0 +1,14 @@
+set(HEADERSRC
+  ${PROJECT_DIR}/detail/Log.hpp
+  ${PROJECT_DIR}/Config.hpp
+  ${PROJECT_DIR}/FreeFuncs.hpp
+  ${PROJECT_DIR}/ImageLayer.hpp
+  ${PROJECT_DIR}/Layer.hpp
+  ${PROJECT_DIR}/Object.hpp
+  ${PROJECT_DIR}/ObjectGroup.hpp
+  ${PROJECT_DIR}/Property.hpp
+  ${PROJECT_DIR}/TileLayer.hpp
+  ${PROJECT_DIR}/LayerGroup.hpp
+  ${PROJECT_DIR}/Tileset.hpp
+  ${PROJECT_DIR}/Types.hpp
+  )
