@@ -252,18 +252,16 @@ bool Map::load(const std::string& path)
         m_backgroundColour = colourFromString(attribString);
     }
 
-    //Infinity
-    bool infinite = mapNode.attribute("infinite").as_bool();
-    if (infinite)
-    {
-        m_infinite = Infinity::Infinite;
-        Logger::log("Infinite maps are not supported yet",Logger::Type::Error);
-        return reset();
-    }
-    else
-    {
-        m_infinite = Infinity::NotInfinite;
-    }
+
+     //infinite check
+     m_infinite = mapNode.attribute("infinite").as_bool();
+     if (m_infinite)
+     {
+         Logger::log("Infinite maps are not supported yet", Logger::Type::Error);
+         return reset();
+     }
+        
+  
 
     //TODO do we need next object ID? technically we won't be creating
     //new objects outside of the scene in xygine.
@@ -275,22 +273,22 @@ bool Map::load(const std::string& path)
         if (name == "tileset")
         {
             m_tilesets.emplace_back(m_workingDirectory);
-            m_tilesets.back().parse(node);
+            m_tilesets.back().parse(node,m_infinite);
         }
         else if (name == "layer")
         {
             m_layers.emplace_back(std::make_unique<TileLayer>(m_tileCount.x * m_tileCount.y));
-            m_layers.back()->parse(node);
+            m_layers.back()->parse(node, m_infinite);
         }
         else if (name == "objectgroup")
         {
             m_layers.emplace_back(std::make_unique<ObjectGroup>());
-            m_layers.back()->parse(node);
+            m_layers.back()->parse(node, m_infinite);
         }
         else if (name == "imagelayer")
         {
             m_layers.emplace_back(std::make_unique<ImageLayer>(m_workingDirectory));
-            m_layers.back()->parse(node);
+            m_layers.back()->parse(node, m_infinite);
         }
         else if (name == "properties")
         {

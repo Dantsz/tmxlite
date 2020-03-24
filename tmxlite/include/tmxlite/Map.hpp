@@ -199,8 +199,7 @@ namespace tmx
 
         Colour m_backgroundColour;
 
-        Infinity m_infinite;
-
+        bool m_infinite;
         std::string m_workingDirectory;
 
         std::vector<Tileset> m_tilesets;
