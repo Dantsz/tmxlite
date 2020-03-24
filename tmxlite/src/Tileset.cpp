@@ -47,7 +47,7 @@ Tileset::Tileset(const std::string& workingDir)
 }
 
 //public
-void Tileset::parse(pugi::xml_node node)
+void Tileset::parse(pugi::xml_node node, bool is_infinite)
 {
     std::string attribString = node.name();
     if (attribString != "tileset")

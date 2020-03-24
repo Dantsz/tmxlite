@@ -40,7 +40,7 @@ ObjectGroup::ObjectGroup()
 }
 
 //public
-void ObjectGroup::parse(const pugi::xml_node& node)
+void ObjectGroup::parse(const pugi::xml_node& node,bool is_infinite)
 {
     std::string attribString = node.name();
     if (attribString != "objectgroup")

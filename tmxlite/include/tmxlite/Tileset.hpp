@@ -107,7 +107,7 @@ namespace tmx
         If node parsing fails an error is printed in the console
         and the Tileset remains in an uninitialised state.
         */
-        void parse(pugi::xml_node);
+        void parse(pugi::xml_node,bool is_infinite = false);
         /*!
         \brief Returns the first GID of this tile set.
         This the ID of the first tile in the tile set, so that
