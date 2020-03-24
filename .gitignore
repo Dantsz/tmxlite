@@ -6,5 +6,8 @@ ReleaseStatic
 /tmxlite/bin
 Debug
 Release
-
+/tmxlite/out
+/ParseTest/out
+x64
 *.swp
+/.vs
