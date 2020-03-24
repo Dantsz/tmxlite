@@ -184,7 +184,7 @@ void TileLayer::parseUnencoded(const pugi::xml_node& node)
 void tmx::TileLayer::parseCVS_infinite(const pugi::xml_node& node)
 {
   
-    std::cout << "Searching for chunks : " << '\n';
+    Logger::log("Searching for chunks : \n");
     for (auto child : node.children())
     {
         std::string attribName = child.name();
@@ -216,6 +216,7 @@ void tmx::TileLayer::parseCVS_infinite(const pugi::xml_node& node)
                     dataStream.ignore();
                 }
             }
+
             Logger::log("Processed chunks : \n");
             for (int i = 0; i < cur_chunk.height; i++)
             {
@@ -237,6 +238,81 @@ void tmx::TileLayer::parseCVS_infinite(const pugi::xml_node& node)
 
 void tmx::TileLayer::parseBase64_infinite(const pugi::xml_node& node)
 {
+    Logger::log("Searching for chunks : \n");
+    for (auto child : node.children())
+    {
+        std::string attribName = child.name();
+        if (attribName == "chunk")
+        {
+            Logger::log("Handle Chunk : \n");
+            m_chunks.push_back({});
+            Chunk& cur_chunk = m_chunks[m_chunks.size() - 1];
+            cur_chunk.x = child.attribute("x").as_int();
+            cur_chunk.y = child.attribute("y").as_int();
+            cur_chunk.width = child.attribute("width").as_uint();
+            cur_chunk.height = child.attribute("height").as_uint();
+            Logger::log("x : " + std::to_string(cur_chunk.x) + " y: " + std::to_string(cur_chunk.y) + " w : " + std::to_string(cur_chunk.width) + " h: " + std::to_string(cur_chunk.height) + '\n'); ;
+            
+            std::string data = child.text().as_string();
+       
+            if (data.empty())
+            {
+                Logger::log("Chunk " + getName() + " has no layer data. Chunk skipped.", Logger::Type::Error);
+                return;
+            }
+
+            //using a string stream we can remove whitespace such as tabs
+            std::stringstream ss;
+            ss << data;
+            ss >> data;
+            data = base64_decode(data);
+
+            std::stringstream dataStream(data);
+            
+            size_t expectedSize = static_cast<size_t>(cur_chunk.width) * static_cast<size_t>(cur_chunk.height) * 4;
+            std::vector<unsigned char> byteData;
+            byteData.reserve(expectedSize);
+
+            if (node.attribute("compression"))
+            {
+                std::size_t dataSize = data.length() * sizeof(unsigned char);
+                if (!decompress(data.c_str(), byteData, dataSize, expectedSize))
+                {
+                    LOG("Failed to decompress layer data, node skipped.", Logger::Type::Error);
+                    return;
+                }
+            }
+            else
+            {
+                
+                byteData.insert(byteData.end(), data.begin(), data.end());
+            
+            }
+
+            static const std::uint32_t mask = 0xf0000000;
+            for (auto i = 0u; i < expectedSize - 3u; i += 4u)
+            {
+                std::uint32_t id = byteData[i] | byteData[i + 1] << 8 | byteData[i + 2] << 16 | byteData[i + 3] << 24;
+                cur_chunk.tile_data.push_back({ id & ~mask ,  ((id & mask) >> 28) });
+
+            }
+
+            Logger::log("Processed chunks : \n");
+            for (int i = 0; i < cur_chunk.height; i++)
+            {
+                std::string line = "";
+                for (int j = 0; j < cur_chunk.width; j++)
+                {
+
+                    line += std::to_string(cur_chunk.tile_data[i * cur_chunk.height + j].ID) + ' ';
+
+                }
+                Logger::log(line);
+            }
+            
+        }
+
+    }
 }
 
 void TileLayer::createTiles(const std::vector<std::uint32_t>& IDs)

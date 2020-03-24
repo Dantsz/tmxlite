@@ -34,7 +34,7 @@ source distribution.
 int main()
 {
     tmx::Map map;
-    std::string inf("maps/inf.tmx");
+    std::string inf("maps/base64uncomp.tmx");
     std::string fin("maps/fin.tmx");
 
     if (map.load(inf))
