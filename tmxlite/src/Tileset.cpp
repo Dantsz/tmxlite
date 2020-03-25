@@ -69,7 +69,7 @@ void Tileset::parse(pugi::xml_node node, bool is_infinite)
         //parse TSX doc
         std::string path = node.attribute("source").as_string();
         path = resolveFilePath(path, m_workingDir);
-
+     
         //as the TSX file now dictates the image path, the working
         //directory is now that of the tsx file
         auto position = path.find_last_of('/');

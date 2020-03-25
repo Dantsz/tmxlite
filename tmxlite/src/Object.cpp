@@ -215,6 +215,24 @@ void Object::parseTemplate(const std::string& path,const std::string& WorkingDir
     {
         Logger::log("Failed opening " + filepath, Logger::Type::Error);
         Logger::log("Reason: " + std::string(result.description()), Logger::Type::Error);
+        return;
     }
+    auto templateNode = doc.child("template");
+
+    auto templt_object = templateNode.child("object");
+
+    m_tileID = templt_object.attribute("gid").as_int();
+    m_AABB.width = templt_object.attribute("width").as_float();
+    m_AABB.height = templt_object.attribute("height").as_float();
+    std::cout << m_tileID << " " << m_AABB.width << " " << m_AABB.height << '\n';
+
+    //CREATE TILESET
+    auto tilesetNode = templateNode.child("tileset");
+    std::string tilset_path = tilesetNode.attribute("source").as_string();
+
+    std::cout << resolveFilePath(tilset_path, WorkingDir) << '\n';
+    m_templTileset = std::make_shared <Tileset>(WorkingDir);
+    //Parse tileset
+    m_templTileset->parse(tilesetNode);
 
 }
