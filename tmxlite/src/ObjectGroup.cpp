@@ -82,7 +82,7 @@ void ObjectGroup::parse(const pugi::xml_node& node,bool is_infinite)
         else if (attribString == "object")
         {
             m_objects.emplace_back();
-            m_objects.back().parse(child);
+            m_objects.back().parse(child,m_workingDir);
         }
     }
 }

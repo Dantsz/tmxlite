@@ -103,7 +103,7 @@ namespace tmx
         \brief Attempts to parse the given xml node and
         read the Object properties if it is valid.
         */
-        void parse(const pugi::xml_node&);
+        void parse(const pugi::xml_node&,const std::string&);
 
         /*!
         \brief Returns the unique ID of the Object
@@ -212,7 +212,7 @@ namespace tmx
 
         void parsePoints(const pugi::xml_node&);
         void parseText(const pugi::xml_node&);
-        void parseTemplate(const std::string&);
+        void parseTemplate(const std::string&, const std::string&);
     };
 }
 

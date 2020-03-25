@@ -46,7 +46,7 @@ Object::Object()
 }
 
 //public
-void Object::parse(const pugi::xml_node& node)
+void Object::parse(const pugi::xml_node& node,const std::string& WokingDir)
 {
     std::string attribString = node.name();
     if (attribString != "object")
@@ -73,7 +73,7 @@ void Object::parse(const pugi::xml_node& node)
     std::string templateStr = node.attribute("template").as_string();
     if (!templateStr.empty())
     {
-        parseTemplate(templateStr);
+        parseTemplate(templateStr, WokingDir);
     }
 
     for (const auto& child : node.children())
@@ -203,7 +203,7 @@ void Object::parseText(const pugi::xml_node& node)
     m_textData.content = node.text().as_string();
 }
 
-void Object::parseTemplate(const std::string& path)
+void Object::parseTemplate(const std::string& path,const std::string& WorkingDir)
 {
     std::string workdir = "";
     
