@@ -32,8 +32,10 @@ source distribution.
 #include <tmxlite/Property.hpp>
 #include <tmxlite/Types.hpp>
 
+
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace pugi
 {
@@ -42,6 +44,7 @@ namespace pugi
 
 namespace tmx
 {
+    class Tileset;
     /*!
     \brief Contains the text information stored in a Text object.
     */
@@ -79,6 +82,8 @@ namespace tmx
     rectangular by default. Since version 1.0 Objects also
     support Text nodes.
     */
+    
+
     class TMXLITE_EXPORT_API Object final
     {
     public:
@@ -173,13 +178,28 @@ namespace tmx
         */
         const Text& getText() const { return m_textData; }
         Text& getText() { return m_textData; }
-
+        /*!
+        \brief Returns the tileset used by the object in case it uses templates,if it's not templated it's an error
+        */
+        std::shared_ptr<tmx::Tileset>& getTmpltileset();
+       
+        
     private:
         std::uint32_t m_UID;
         std::string m_name;
         std::string m_type;
         Vector2f m_position;
+
+        //The dimensions of the object,I guees
         FloatRect m_AABB;
+       
+        //Template object need their own Tilesets I think
+        //Can be raw pointer , but I'm not familiar enought with the codebase , so I won't risk it
+        std::shared_ptr<Tileset> m_templTileset;
+        // Tileset m_templtileset;
+        bool is_templated;
+      
+
         float m_rotation;
         std::uint32_t m_tileID;
         bool m_visible;

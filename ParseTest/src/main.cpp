@@ -34,10 +34,9 @@ source distribution.
 int main()
 {
     tmx::Map map;
-    std::string inf("maps/base64uncomp.tmx");
-    std::string fin("maps/fin.tmx");
+    std::string tmp_test("maps/template_test.tmx");
 
-    if (map.load(inf))
+    if (map.load(tmp_test))
     {
         std::cout << "Loaded Map version: " << map.getVersion().upper << ", " << map.getVersion().lower << std::endl;
 

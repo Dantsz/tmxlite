@@ -195,6 +195,11 @@ const Tileset::Tile* Tileset::getTile(std::uint32_t id) const
     return (itr == m_tiles.end()) ? nullptr : &(*itr);
 }
 
+std::string tmx::Tileset::getSource()
+{
+     return m_source; 
+}
+
 //private
 void Tileset::reset()
 {

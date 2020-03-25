@@ -197,6 +197,11 @@ namespace tmx
          */
         const Tile* getTile(std::uint32_t id) const;
 
+        /*!
+        \brief Returns the path to the image of the tileset
+        */
+        std::string getSource();
+
     private:
 
         std::string m_workingDir;

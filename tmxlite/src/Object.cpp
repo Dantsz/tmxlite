@@ -29,8 +29,9 @@ source distribution.
 #include <tmxlite/FreeFuncs.hpp>
 #include "detail/pugixml.hpp"
 #include <tmxlite/detail/Log.hpp>
-
+#include <tmxlite/Tileset.hpp>
 #include <sstream>
+
 
 using namespace tmx;
 
@@ -66,6 +67,8 @@ void Object::parse(const pugi::xml_node& node)
     m_rotation = node.attribute("rotation").as_float();
     m_tileID = node.attribute("gid").as_uint();
     m_visible = node.attribute("visible").as_bool(true);
+
+
 
     std::string templateStr = node.attribute("template").as_string();
     if (!templateStr.empty())
@@ -108,6 +111,14 @@ void Object::parse(const pugi::xml_node& node)
             parseText(child);
         }
     }
+}
+
+
+std::shared_ptr<tmx::Tileset>& tmx::Object::getTmpltileset()
+{
+    if (is_templated) return m_templTileset;
+    Logger::log("Attempting to get the tileset of a non-templated object, use m_UID instead", Logger::Type::Error);
+
 }
 
 //private
@@ -194,5 +205,13 @@ void Object::parseText(const pugi::xml_node& node)
 
 void Object::parseTemplate(const std::string& path)
 {
-    Logger::log("Requested a template at " + path + " - but this is not yet implemented *sadface*", Logger::Type::Info);
+    
+    pugi::xml_document doc;
+    auto result = doc.load_file(path.c_str());
+    if (!result)
+    {
+        Logger::log("Failed opening " + path, Logger::Type::Error);
+        Logger::log("Reason: " + std::string(result.description()), Logger::Type::Error);
+    }
+
 }
