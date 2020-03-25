@@ -4,7 +4,8 @@ tmxlite
 #### Fork
 This is a version of tmxlite that aims to improve to the original by adding support for some new features of .tmx extension
 New feature:
- * Parse infinite maps (current goal)
+ * Parse infinite maps 
+ * Template support
  
 
 
