@@ -205,6 +205,7 @@ void Object::parseText(const pugi::xml_node& node)
 
 void Object::parseTemplate(const std::string& path)
 {
+    std::string workdir = "";
     
     pugi::xml_document doc;
     auto result = doc.load_file(path.c_str());

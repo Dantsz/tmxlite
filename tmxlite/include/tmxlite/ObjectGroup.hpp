@@ -49,7 +49,8 @@ namespace tmx
             TopDown //< objects should be drawn sorted by their Y position
         };
 
-        ObjectGroup();
+        explicit ObjectGroup(const std::string&);
+        ObjectGroup() = default;
         ~ObjectGroup() = default;
 
         Type getType() const override { return Layer::Type::Object; }
@@ -77,6 +78,8 @@ namespace tmx
     private:
         Colour m_colour;
         DrawOrder m_drawOrder;
+        //need this for templates
+        std::string m_workingDir;
 
         std::vector<Property> m_properties;
         std::vector<Object> m_objects;

@@ -278,7 +278,7 @@ bool Map::load(const std::string& path)
         }
         else if (name == "objectgroup")
         {
-            m_layers.emplace_back(std::make_unique<ObjectGroup>());
+            m_layers.emplace_back(std::make_unique<ObjectGroup>(m_workingDirectory));
             m_layers.back()->parse(node, m_infinite);
         }
         else if (name == "imagelayer")

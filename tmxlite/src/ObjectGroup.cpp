@@ -32,9 +32,10 @@ source distribution.
 
 using namespace tmx;
 
-ObjectGroup::ObjectGroup()
+ObjectGroup::ObjectGroup(const std::string& WorkingDir)
     : m_colour    (127, 127, 127, 255),
-    m_drawOrder (DrawOrder::TopDown)
+    m_drawOrder (DrawOrder::TopDown),
+    m_workingDir (WorkingDir)
 {
 
 }
