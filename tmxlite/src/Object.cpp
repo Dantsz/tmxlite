@@ -40,7 +40,8 @@ Object::Object()
     m_rotation  (0.f),
     m_tileID    (0),
     m_visible   (true),
-    m_shape     (Shape::Rectangle)
+    m_shape     (Shape::Rectangle),
+    is_templated (false)
 {
 
 }
@@ -74,6 +75,7 @@ void Object::parse(const pugi::xml_node& node,const std::string& WokingDir)
     if (!templateStr.empty())
     {
         parseTemplate(templateStr, WokingDir);
+        is_templated = true;
     }
 
     for (const auto& child : node.children())
@@ -204,10 +206,10 @@ void Object::parseText(const pugi::xml_node& node)
 }
 
 void Object::parseTemplate(const std::string& path,const std::string& WorkingDir)
-{
+{ 
     std::string filepath = "";
     filepath = tmx::resolveFilePath(path, WorkingDir);
-    std::cout << filepath << '\n';
+   
     pugi::xml_document doc;
 
     auto result = doc.load_file(filepath.c_str());
@@ -224,13 +226,12 @@ void Object::parseTemplate(const std::string& path,const std::string& WorkingDir
     m_tileID = templt_object.attribute("gid").as_int();
     m_AABB.width = templt_object.attribute("width").as_float();
     m_AABB.height = templt_object.attribute("height").as_float();
-    std::cout << m_tileID << " " << m_AABB.width << " " << m_AABB.height << '\n';
-
+  
     //CREATE TILESET
     auto tilesetNode = templateNode.child("tileset");
     std::string tilset_path = tilesetNode.attribute("source").as_string();
 
-    std::cout << resolveFilePath(tilset_path, WorkingDir) << '\n';
+  
     m_templTileset = std::make_shared <Tileset>(WorkingDir);
     //Parse tileset
     m_templTileset->parse(tilesetNode);
