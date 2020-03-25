@@ -78,10 +78,7 @@ namespace tmx
     {
         Even, Odd, None
     };
-    enum class Infinity
-    {
-        NotInfinite, Infinite
-    };
+
     /*!
     \brief Parser for TMX format tile maps.
     This class can be used to parse the XML format tile maps created
