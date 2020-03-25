@@ -205,13 +205,15 @@ void Object::parseText(const pugi::xml_node& node)
 
 void Object::parseTemplate(const std::string& path,const std::string& WorkingDir)
 {
-    std::string workdir = "";
-    
+    std::string filepath = "";
+    filepath = tmx::resolveFilePath(path, WorkingDir);
+    std::cout << filepath << '\n';
     pugi::xml_document doc;
-    auto result = doc.load_file(path.c_str());
+
+    auto result = doc.load_file(filepath.c_str());
     if (!result)
     {
-        Logger::log("Failed opening " + path, Logger::Type::Error);
+        Logger::log("Failed opening " + filepath, Logger::Type::Error);
         Logger::log("Reason: " + std::string(result.description()), Logger::Type::Error);
     }
 
