@@ -5,7 +5,7 @@ tmxlite
 This is a version of tmxlite that aims to improve to the original by adding support for some new features of .tmx extension
 New feature:
  * Parse infinite maps (done)
- * Template support (current goal)
+ * Template support (they work , but the interface is a bit wanky)
  
 
 
