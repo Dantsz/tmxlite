@@ -82,8 +82,12 @@ Map::Map()
 bool Map::load(const std::string& path)
 {
     reset();
-
+    std::cout << "loading" << '\n';
     //open the doc
+    std::cout << path.size() << '\n';
+    //std::cout << "loading the file into memory!!" << '\n';
+    for (int i = 0; i < 18; i++) std::cout << path[i] << '\n';
+   
     pugi::xml_document doc;
     auto result = doc.load_file(path.c_str());
     if (!result)
@@ -92,6 +96,7 @@ bool Map::load(const std::string& path)
         Logger::log("Reason: " + std::string(result.description()), Logger::Type::Error);
         return false;
     }
+    std::cout << "loaded the file" << '\n';
 
     //make sure we have consistent path separators
     m_workingDirectory = path;
@@ -104,7 +109,7 @@ bool Map::load(const std::string& path)
         m_workingDirectory.pop_back();
     }
     
-
+    std::cout << "Formated file" << '\n';
     //find the map node and bail if it doesn't exist
     auto mapNode = doc.child("map");
     if(!mapNode)
@@ -112,8 +117,9 @@ bool Map::load(const std::string& path)
         Logger::log("Failed opening map: " + path + ", no map data found", Logger::Type::Error);
         return reset();
     }
-
+    std::cout << "opened the map" << '\n';
     //parse map attributes
+    std::cout << "parsing atributes " << '\n';
     std::size_t pointPos = 0;
     std::string attribString = mapNode.attribute("version").as_string();
     if (attribString.empty() || (pointPos = attribString.find('.')) == std::string::npos)
@@ -121,7 +127,7 @@ bool Map::load(const std::string& path)
         Logger::log("Invalid map version value, map not loaded.", Logger::Type::Error);
         return reset();
     }
-
+    std::cout << "parsed version " << '\n';
     m_version.upper = STOI(attribString.substr(0, pointPos));
     m_version.lower = STOI(attribString.substr(pointPos + 1));
 

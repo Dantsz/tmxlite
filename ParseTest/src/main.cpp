@@ -34,7 +34,7 @@ source distribution.
 int main()
 {
     tmx::Map map;
-    std::string tmp_test("maps/template_test.tmx");
+    std::string tmp_test("maps/good_example.tmx");
 
     if (map.load(tmp_test))
     {
