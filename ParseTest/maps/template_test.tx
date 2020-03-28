@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <template>
  <tileset firstgid="1" source="Template_boi.tsx"/>
- <object gid="1" width="183.75" height="140.5"/>
+ <object gid="1" width="183.75" height="140.5">
+  <properties>
+   <property name="Nothing" value="There's nothing here"/>
+  </properties>
+ </object>
 </template>

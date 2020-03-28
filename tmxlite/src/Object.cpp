@@ -227,6 +227,50 @@ void Object::parseTemplate(const std::string& path,const std::string& WorkingDir
     m_AABB.width = templt_object.attribute("width").as_float();
     m_AABB.height = templt_object.attribute("height").as_float();
   
+
+    //get the properies
+   
+    std::string attribString;
+    for (const auto& child : templt_object.children())
+    {
+        attribString = child.name();
+        if (attribString == "properties")
+        {
+            for (const auto& p : child.children())
+            {
+                m_properties.emplace_back();
+                m_properties.back().parse(p);
+            }
+        }
+        else if (attribString == "ellipse")
+        {
+            m_shape = Shape::Ellipse;
+        }
+        else if (attribString == "point")
+        {
+            m_shape = Shape::Point;
+        }
+        else if (attribString == "polygon")
+        {
+            m_shape = Shape::Polygon;
+            parsePoints(child);
+        }
+        else if (attribString == "polyline")
+        {
+            m_shape = Shape::Polyline;
+            parsePoints(child);
+        }
+        else if (attribString == "text")
+        {
+            m_shape = Shape::Text;
+            parseText(child);
+        }
+    }
+    
+ 
+
+
+
     //CREATE TILESET
     auto tilesetNode = templateNode.child("tileset");
     std::string tilset_path = tilesetNode.attribute("source").as_string();
