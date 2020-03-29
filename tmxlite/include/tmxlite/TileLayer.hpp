@@ -83,7 +83,7 @@ namespace tmx
         /*!
         \brief Returns the list of tiles used to make up the layer
         */
-        const std::vector<Tile>& getTiles() const { return m_tiles; }
+        const std::vector<Tile>& getTiles() const;
         const std::vector<Chunk>& getChunks() const;
 
 

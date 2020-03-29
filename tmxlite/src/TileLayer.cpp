@@ -89,11 +89,20 @@ void TileLayer::parse(const pugi::xml_node& node,bool is_infinite)
 
 }
 
+const std::vector<TileLayer::Tile>& tmx::TileLayer::getTiles() const
+{
+    if (is_infinite)
+    {
+        tmx::Logger::log("The map is not infinite, cannot get the tiles, use getChunks() instead to the get the data as chunks", tmx::Logger::Type::Error);
+    }
+    return m_tiles;
+}
+
 const std::vector<TileLayer::Chunk>& tmx::TileLayer::getChunks() const
 {
     if (!is_infinite)
     {
-        tmx::Logger::log("The map is not infinite, cannot get the chunks", tmx::Logger::Type::Error);
+        tmx::Logger::log("The map is not infinite, cannot get the chunks , use getTiles to get the whole layer as a vector", tmx::Logger::Type::Error);
     }
     return m_chunks; 
 }
