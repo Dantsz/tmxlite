@@ -84,8 +84,13 @@ namespace tmx
         \brief Returns the list of tiles used to make up the layer
         */
         const std::vector<Tile>& getTiles() const { return m_tiles; }
+        const std::vector<Chunk>& getChunks() const;
+
 
     private:
+
+        bool is_infinite;
+
         std::vector<Tile> m_tiles;
         std::size_t m_tileCount;
 

@@ -89,9 +89,19 @@ void TileLayer::parse(const pugi::xml_node& node,bool is_infinite)
 
 }
 
+const std::vector<TileLayer::Chunk>& tmx::TileLayer::getChunks() const
+{
+    if (!is_infinite)
+    {
+        tmx::Logger::log("The map is not infinite, cannot get the chunks", tmx::Logger::Type::Error);
+    }
+    return m_chunks; 
+}
+
 //private
 void TileLayer::parseBase64(const pugi::xml_node& node)
 {
+    is_infinite = false;
     std::string data = node.text().as_string();
     if (data.empty())
     {
@@ -137,6 +147,7 @@ void TileLayer::parseBase64(const pugi::xml_node& node)
 
 void TileLayer::parseCSV(const pugi::xml_node& node)
 {
+    is_infinite = false;
     std::string data = node.text().as_string();
     if (data.empty())
     {
@@ -165,6 +176,7 @@ void TileLayer::parseCSV(const pugi::xml_node& node)
 
 void TileLayer::parseUnencoded(const pugi::xml_node& node)
 {
+    is_infinite = false;
     std::string attribName;
     std::vector<std::uint32_t> IDs;
     IDs.reserve(m_tileCount);
@@ -183,7 +195,7 @@ void TileLayer::parseUnencoded(const pugi::xml_node& node)
 
 void tmx::TileLayer::parseCVS_infinite(const pugi::xml_node& node)
 {
-  
+    is_infinite = true;
     Logger::log("Searching for chunks : \n");
     for (auto child : node.children())
     {
@@ -238,6 +250,7 @@ void tmx::TileLayer::parseCVS_infinite(const pugi::xml_node& node)
 
 void tmx::TileLayer::parseBase64_infinite(const pugi::xml_node& node)
 {
+    is_infinite = true;
     Logger::log("Searching for chunks : \n");
     for (auto child : node.children())
     {
