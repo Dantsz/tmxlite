@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2016
+Matt Marchant 2016 - 2021
 http://trederia.blogspot.com
 
 tmxlite - Zlib license.
@@ -25,9 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include "miniz.h"
 #include <tmxlite/FreeFuncs.hpp>
 #include <tmxlite/detail/Log.hpp>
-#include "miniz.h"
 
 #include <cstring>
 
@@ -68,14 +68,15 @@ bool tmx::decompress(const char* source, std::vector<unsigned char>& dest, std::
 
         switch (result)
         {
+        default: break;
         case Z_NEED_DICT:
         case Z_STREAM_ERROR:
             result = Z_DATA_ERROR;
         case Z_DATA_ERROR:
-            Logger::log("If using gzip compression try using zlib instead", Logger::Type::Info);
+            Logger::log("If using gzip or zstd compression try using zlib instead", Logger::Type::Info);
         case Z_MEM_ERROR:
             inflateEnd(&stream);
-            Logger::log(std::to_string(result), Logger::Type::Error);
+            Logger::log("inflate() returned " +  std::to_string(result), Logger::Type::Error);
             return false;
         }
 

@@ -44,6 +44,7 @@ are implemented.
 #include <SFML/Graphics/Vertex.hpp>
 #include <SFML/Graphics/Texture.hpp>
 #include <SFML/Graphics/Transformable.hpp>
+#include <SFML/System/Time.hpp>
 
 #include <memory>
 #include <vector>
@@ -117,10 +118,41 @@ public:
         const auto& selectedChunk = getChunkAndTransform(tileX, tileY, chunkLocale);
         return selectedChunk->getColor(chunkLocale.x, chunkLocale.y);
     }
+    
+    void update(sf::Time elapsed)
+    {
+        for (auto& c : m_visibleChunks)
+        {
+            for (AnimationState& as : c->getActiveAnimations())
+            {
+                as.currentTime += elapsed;
+
+                tmx::TileLayer::Tile tile;
+                tile.ID = as.animTile.animation.frames[0].tileID;
+                tile.flipFlags = 0; // TODO: get flipFlags from original tmx::TileLayer::Tile
+
+                std::uint32_t animTime = 0;
+                for (const auto& frame : as.animTile.animation.frames)
+                {
+                    animTime += frame.duration;
+                    if (as.currentTime.asMilliseconds() >= animTime)
+                    {
+                        tile.ID = frame.tileID;
+                        if (frame == as.animTile.animation.frames.back())
+                        {
+                            as.currentTime = sf::milliseconds(0);
+                        }
+                    }
+                }
+
+                setTile(as.tileCords.x, as.tileCords.y, tile);
+            }
+        }
+    }
 
 private:
-	//increasing m_chunkSize by 4; fixes render problems when mapsize != chunksize
-	//sf::Vector2f m_chunkSize = sf::Vector2f(1024.f, 1024.f);
+    //increasing m_chunkSize by 4; fixes render problems when mapsize != chunksize
+    //sf::Vector2f m_chunkSize = sf::Vector2f(1024.f, 1024.f);
     sf::Vector2f m_chunkSize = sf::Vector2f(512.f, 512.f);
     sf::Vector2u m_chunkCount;
     sf::Vector2u m_MapTileSize;   // general Tilesize of Map
@@ -133,6 +165,7 @@ private:
     {
         sf::Vector2u tileCords;
         sf::Time startTime;
+        sf::Time currentTime;
         tmx::Tileset::Tile animTile;
         std::uint8_t flipFlags;
     };
@@ -142,13 +175,13 @@ private:
     public:
         using Ptr = std::unique_ptr<Chunk>;
 
-		// the Android OpenGL driver isn't capable of rendering quads,
-		// so we need to use two triangles per tile instead
+        // the Android OpenGL driver isn't capable of rendering quads,
+        // so we need to use two triangles per tile instead
 #ifdef __ANDROID__
-		using Tile = std::array<sf::Vertex, 6u>;
+        using Tile = std::array<sf::Vertex, 6u>;
 #endif
 #ifndef __ANDROID__
-		using Tile = std::array<sf::Vertex, 4u>;
+        using Tile = std::array<sf::Vertex, 4u>;
 #endif
         Chunk(const tmx::TileLayer& layer, std::vector<const tmx::Tileset*> tilesets,
             const sf::Vector2f& position, const sf::Vector2f& tileCount, const sf::Vector2u& tileSize,
@@ -233,12 +266,12 @@ private:
                                 sf::Vertex(tileOffset - getPosition() + sf::Vector2f(0.f, ca->tileSetSize.y), m_chunkColors[idx], tileIndex + sf::Vector2f(0.f, ca->tileSetSize.y))
 #endif
 #ifdef __ANDROID__
-								sf::Vertex(tileOffset - getPosition(), m_chunkColors[idx], tileIndex),
-								sf::Vertex(tileOffset - getPosition() + sf::Vector2f(ca->tileSetSize.x, 0.f), m_chunkColors[idx], tileIndex + sf::Vector2f(ca->tileSetSize.x, 0.f)),
-								sf::Vertex(tileOffset - getPosition() + sf::Vector2f(ca->tileSetSize.x, ca->tileSetSize.y), m_chunkColors[idx], tileIndex + sf::Vector2f(ca->tileSetSize.x, ca->tileSetSize.y)),
-								sf::Vertex(tileOffset - getPosition(), m_chunkColors[idx], tileIndex),
-								sf::Vertex(tileOffset - getPosition() + sf::Vector2f(0.f, ca->tileSetSize.y), m_chunkColors[idx], tileIndex + sf::Vector2f(0.f, ca->tileSetSize.y)),
-								sf::Vertex(tileOffset - getPosition() + sf::Vector2f(ca->tileSetSize.x, ca->tileSetSize.y), m_chunkColors[idx], tileIndex + sf::Vector2f(ca->tileSetSize.x, ca->tileSetSize.y))
+                                sf::Vertex(tileOffset - getPosition(), m_chunkColors[idx], tileIndex),
+                                sf::Vertex(tileOffset - getPosition() + sf::Vector2f(ca->tileSetSize.x, 0.f), m_chunkColors[idx], tileIndex + sf::Vector2f(ca->tileSetSize.x, 0.f)),
+                                sf::Vertex(tileOffset - getPosition() + sf::Vector2f(ca->tileSetSize.x, ca->tileSetSize.y), m_chunkColors[idx], tileIndex + sf::Vector2f(ca->tileSetSize.x, ca->tileSetSize.y)),
+                                sf::Vertex(tileOffset - getPosition(), m_chunkColors[idx], tileIndex),
+                                sf::Vertex(tileOffset - getPosition() + sf::Vector2f(0.f, ca->tileSetSize.y), m_chunkColors[idx], tileIndex + sf::Vector2f(0.f, ca->tileSetSize.y)),
+                                sf::Vertex(tileOffset - getPosition() + sf::Vector2f(ca->tileSetSize.x, ca->tileSetSize.y), m_chunkColors[idx], tileIndex + sf::Vector2f(ca->tileSetSize.x, ca->tileSetSize.y))
 #endif
                             };
                             doFlips(m_chunkTileIDs[idx].flipFlags,&tile[0].texCoords,&tile[1].texCoords,&tile[2].texCoords,&tile[3].texCoords);
@@ -389,6 +422,7 @@ private:
                 flipD(v0,v1,v2,v3);
             }
         }
+
     private:
         class ChunkArray final : public sf::Drawable
         {
@@ -435,7 +469,7 @@ private:
                 rt.draw(m_vertices.data(), m_vertices.size(), sf::Quads, states);
 #endif
 #ifdef __ANDROID__
-				rt.draw(m_vertices.data(), m_vertices.size(), sf::Triangles, states);
+                rt.draw(m_vertices.data(), m_vertices.size(), sf::Triangles, states);
 #endif
             }
         };
@@ -496,7 +530,7 @@ private:
         {
             const auto& path = ts->getImagePath();
             //std::unique_ptr<sf::Texture> newTexture = std::make_unique<sf::Texture>();
-			std::unique_ptr<sf::Texture> newTexture = std::make_unique<sf::Texture>();
+            std::unique_ptr<sf::Texture> newTexture = std::make_unique<sf::Texture>();
             sf::Image img;
             if (!img.loadFromFile(path))
             {
@@ -538,7 +572,7 @@ private:
                 }
                 //m_chunks.emplace_back(std::make_unique<Chunk>(layer, usedTileSets,
                 //    sf::Vector2f(x * m_chunkSize.x, y * m_chunkSize.y), tileCount, map.getTileCount().x, m_textureResource));
-				m_chunks.emplace_back(std::make_unique<Chunk>(layer, usedTileSets,
+                m_chunks.emplace_back(std::make_unique<Chunk>(layer, usedTileSets,
                     sf::Vector2f(x * m_chunkSize.x, y * m_chunkSize.y), tileCount, tileSize, map.getTileCount().x, m_textureResource, map.getAnimatedTiles()));
             }
         }
@@ -579,36 +613,6 @@ private:
             rt.draw(*c, states);
         }
     }
-    public:
-    void update(sf::Time elapsed)
-    {
-        for (auto& c : m_visibleChunks)
-        {
-            for (AnimationState& as : c->getActiveAnimations())
-            {
-                sf::Time delta = elapsed - as.startTime;
-                auto overallDuration = sf::milliseconds(0);
-                tmx::TileLayer::Tile tile;
-                tile.ID = as.animTile.animation.frames[0].tileID;
-                tile.flipFlags = 0; // TODO: get flipFlags from original tmx::TileLayer::Tile
-                for(const auto& frame : as.animTile.animation.frames)
-                {
-                    overallDuration += sf::milliseconds(frame.duration);
-                    if (delta < overallDuration)    // found frame to display
-                    {
-                        tile.ID = frame.tileID;
-                        break;
-                    }
-                }
-                if (delta > overallDuration)    // loop the animation by resetting start time
-                {
-                    as.startTime = elapsed;
-                }
-                setTile(as.tileCords.x, as.tileCords.y, tile);
-            }
-        }
-    }
-
 };
 
 #endif //SFML_ORTHO_HPP_

@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2016
+Matt Marchant 2016 - 2021
 http://trederia.blogspot.com
 
 tmxlite - Zlib license.
@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef TMXLITE_TYPES_HPP_
-#define TMXLITE_TYPES_HPP_
+#pragma once
 
 #include <tmxlite/Config.hpp>
 
@@ -111,7 +110,18 @@ namespace tmx
         Colour(std::uint8_t red = 0, std::uint8_t green = 0, std::uint8_t blue = 0, std::uint8_t alpha = 255)
             : r(red), g(green), b(blue), a(alpha) {}
         std::uint8_t r, g, b, a;
+
+        bool operator == (const Colour& other)
+        {
+            return other.r == r
+                && other.g == g
+                && other.b == b
+                && other.a == a;
+        }
+
+        bool operator != (const Colour& other)
+        {
+            return !(*this == other);
+        }
     };
 }
-
-#endif //TMXLITE_TYPES_HPP_

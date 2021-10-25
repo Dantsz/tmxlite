@@ -41,8 +41,9 @@ LayerGroup::LayerGroup(const std::string& workingDir, const Vector2u& tileCount)
 }
 
 //public
-void LayerGroup::parse(const pugi::xml_node& node)
+void LayerGroup::parse(const pugi::xml_node& node, Map* map)
 {
+    assert(map);
     std::string attribString = node.name();
     if (attribString != "group")
     {
@@ -54,6 +55,7 @@ void LayerGroup::parse(const pugi::xml_node& node)
     setOpacity(node.attribute("opacity").as_float(1.f));
     setVisible(node.attribute("visible").as_bool(true));
     setOffset(node.attribute("offsetx").as_int(), node.attribute("offsety").as_int());
+    setSize(node.attribute("width").as_uint(), node.attribute("height").as_uint());
 
     // parse children
     for (const auto& child : node.children())
@@ -69,22 +71,22 @@ void LayerGroup::parse(const pugi::xml_node& node)
         else if (attribString == "layer")
         {
             m_layers.emplace_back(std::make_unique<TileLayer>(m_tileCount.x * m_tileCount.y));
-            m_layers.back()->parse(node);
+            m_layers.back()->parse(child, map);
         }
         else if (attribString == "objectgroup")
         {
             m_layers.emplace_back(std::make_unique<ObjectGroup>());
-            m_layers.back()->parse(node);
+            m_layers.back()->parse(child, map);
         }
         else if (attribString == "imagelayer")
         {
             m_layers.emplace_back(std::make_unique<ImageLayer>(m_workingDir));
-            m_layers.back()->parse(node);
+            m_layers.back()->parse(child, map);
         }
         else if (attribString == "group")
         {
             m_layers.emplace_back(std::make_unique<LayerGroup>(m_workingDir, m_tileCount));
-            m_layers.back()->parse(node);
+            m_layers.back()->parse(child, map);
         }
         else
         {

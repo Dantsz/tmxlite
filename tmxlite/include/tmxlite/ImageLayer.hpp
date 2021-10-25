@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2016 - 2019
+Matt Marchant 2016 - 2021
 http://trederia.blogspot.com
 
 tmxlite - Zlib license.
@@ -25,8 +25,7 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#ifndef TMXLITE_IMAGELAYER_HPP_
-#define TMXLITE_IMAGELAYER_HPP_
+#pragma once
 
 #include <tmxlite/Config.hpp>
 #include <tmxlite/Layer.hpp>
@@ -43,26 +42,28 @@ namespace tmx
     {
     public:
         explicit ImageLayer(const std::string&);
-        ~ImageLayer() = default;
 
         Type getType() const override { return Layer::Type::Image; }
-        void parse(const pugi::xml_node&) override;
+        void parse(const pugi::xml_node&, Map*) override;
 
         /*!
         \brief Returns the path, relative to the working directory,
         of the image used by the image layer.
         */
         const std::string& getImagePath() const { return m_filePath; }
+
         /*!
         \brief Returns the colour used by the image to represent transparent
         pixels. By default this is (0, 0, 0, 0)
         */
         const Colour& getTransparencyColour() const { return m_transparencyColour; }
+
         /*!
         \brief Returns true if the image used by this layer specifically states a 
         colour to use as transparency
         */
         bool hasTransparency() const { return m_hasTransparency; }
+
         /*!
         \brief Returns the size of the image of the image layer in pixels.
         */
@@ -80,7 +81,6 @@ namespace tmx
     inline ImageLayer& Layer::getLayerAs<ImageLayer>()
     {
         assert(getType() == Type::Image);
-        return *dynamic_cast<ImageLayer*>(this);
+        return *static_cast<ImageLayer*>(this);
     }
 }
-#endif //TMXLITE_IMAGELAYER_HPP_

@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2016
+Matt Marchant 2016 - 2021
 http://trederia.blogspot.com
 
 tmxlite - Zlib license.
@@ -25,9 +25,9 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
+#include "detail/pugixml.hpp"
 #include <tmxlite/ImageLayer.hpp>
 #include <tmxlite/FreeFuncs.hpp>
-#include "detail/pugixml.hpp"
 #include <tmxlite/detail/Log.hpp>
 
 using namespace tmx;
@@ -40,7 +40,7 @@ ImageLayer::ImageLayer(const std::string& workingDir)
 }
 
 //public
-void ImageLayer::parse(const pugi::xml_node& node)
+void ImageLayer::parse(const pugi::xml_node& node, Map*)
 {
     std::string attribName = node.name();
     if (attribName != "imagelayer")
@@ -53,6 +53,7 @@ void ImageLayer::parse(const pugi::xml_node& node)
     setOpacity(node.attribute("opacity").as_float(1.f));
     setVisible(node.attribute("visible").as_bool(true));
     setOffset(node.attribute("offsetx").as_int(), node.attribute("offsety").as_int());
+    setSize(node.attribute("width").as_uint(), node.attribute("height").as_uint());
 
     for (const auto& child : node.children())
     {

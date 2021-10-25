@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2016
+Matt Marchant 2016 - 2021
 http://trederia.blogspot.com
 
 tmxlite - Zlib license.
@@ -49,8 +49,7 @@ misrepresented as being the original source code.
 René Nyffenegger rene.nyffenegger@adp-gmbh.ch
 *********************************************************************/
 
-#ifndef TMXLITE_TILE_FUNCS_HPP_
-#define TMXLITE_TILE_FUNCS_HPP_
+#pragma once
 
 #include <tmxlite/detail/Android.hpp>
 #include <tmxlite/detail/Log.hpp>
@@ -187,18 +186,41 @@ namespace tmx
                 outPath = outPath.substr(0, result);
             }
         }
-// this does only work on windows		
+// this does only work on windows       
 #ifndef __ANDROID__
-        return std::move(outPath += '/' + path);
+        return outPath + '/' + path;
 #endif
 
 // todo: make resolveFilePath work with subfolders on 
 // android - currently only the root folder is working
 
 #ifdef __ANDROID__
-		return std::move(outPath = path);
+        return path;
 #endif
     }
-}
 
-#endif //TMXLITE_TILE_FUNCS_HPP_
+    static inline std::string getFilePath(const std::string& path)
+    {
+        //TODO this doesn't actually check that there is a file at the
+        //end of the path, or that it's even a valid path...
+
+        static auto searchFunc = [](const char separator, const std::string& path)->std::string
+        {
+            std::size_t i = path.rfind(separator, path.length());
+            if (i != std::string::npos)
+            {
+                return(path.substr(0, i + 1));
+            }
+
+            return "";
+        };
+
+
+#ifdef _WIN32 //try windows formatted paths first
+        std::string retVal = searchFunc('\\', path);
+        if (!retVal.empty()) return retVal;
+#endif
+
+        return searchFunc('/', path);
+    }
+} //namespacec tmx

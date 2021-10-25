@@ -1,5 +1,5 @@
 /*********************************************************************
-Matt Marchant 2016
+Matt Marchant 2016 - 2021
 http://trederia.blogspot.com
 
 tmxlite - Zlib license.
@@ -25,8 +25,8 @@ and must not be misrepresented as being the original software.
 source distribution.
 *********************************************************************/
 
-#include <tmxlite/Property.hpp>
 #include "detail/pugixml.hpp"
+#include <tmxlite/Property.hpp>
 #include <tmxlite/detail/Log.hpp>
 #include <tmxlite/FreeFuncs.hpp>
 
@@ -35,12 +35,70 @@ using namespace tmx;
 Property::Property()
     : m_type(Type::Undef)
 {
+}
 
+Property Property::fromBoolean(bool value)
+{
+    Property p;
+    p.m_type = Type::Boolean;
+    p.m_boolValue = value;
+    return p;
+}
+
+Property Property::fromFloat(float value)
+{
+    Property p;
+    p.m_type = Type::Float;
+    p.m_floatValue = value;
+    return p;
+}
+
+Property Property::fromInt(int value)
+{
+    Property p;
+    p.m_type = Type::Int;
+    p.m_intValue = value;
+    return p;
+}
+
+Property Property::fromString(const std::string& value)
+{
+    Property p;
+    p.m_type = Type::String;
+    p.m_stringValue = value;
+    return p;
+}
+
+Property Property::fromColour(const Colour& value)
+{
+    Property p;
+    p.m_type = Type::Colour;
+    p.m_colourValue = value;
+    return p;
+}
+
+Property Property::fromFile(const std::string& value)
+{
+    Property p;
+    p.m_type = Type::File;
+    p.m_stringValue = value;
+    return p;
+}
+
+Property Property::fromObject(int value)
+{
+    Property p;
+    p.m_type = Type::Object;
+    p.m_intValue = value;
+    return p;
 }
 
 //public
-void Property::parse(const pugi::xml_node& node)
+void Property::parse(const pugi::xml_node& node, bool isObjectTypes)
 {
+    // The value attribute name is different in object types
+    const char *const valueAttribute = isObjectTypes ? "default" : "value";
+
     std::string attribData = node.name();
     if (attribData != "property")
     {
@@ -53,39 +111,53 @@ void Property::parse(const pugi::xml_node& node)
     attribData = node.attribute("type").as_string("string");
     if (attribData == "bool")
     {
-        attribData = node.attribute("value").as_string("false");
+        attribData = node.attribute(valueAttribute).as_string("false");
         m_boolValue = (attribData == "true");
         m_type = Type::Boolean;
         return;
     }
     else if (attribData == "int")
     {
-        m_intValue = node.attribute("value").as_int(0);
+        m_intValue = node.attribute(valueAttribute).as_int(0);
         m_type = Type::Int;
         return;
     }
     else if (attribData == "float")
     {
-        m_floatValue = node.attribute("value").as_float(0.f);
+        m_floatValue = node.attribute(valueAttribute).as_float(0.f);
         m_type = Type::Float;
         return;
     }
-    else if(attribData == "string")
+    else if (attribData == "string")
     {
-        m_stringValue = node.attribute("value").as_string();
+        m_stringValue = node.attribute(valueAttribute).as_string();
+
+        //if value is empty, try getting the child value instead
+        //as this is how multiline string properties are stored.
+        if(m_stringValue.empty())
+        {
+            m_stringValue = node.child_value();
+        }
+
         m_type = Type::String;
         return;
     }
     else if (attribData == "color")
     {
-        m_colourValue = colourFromString(node.attribute("value").as_string("#FFFFFFFF"));
+        m_colourValue = colourFromString(node.attribute(valueAttribute).as_string("#FFFFFFFF"));
         m_type = Type::Colour;
         return;
     }
     else if (attribData == "file")
     {
-        m_stringValue = node.attribute("value").as_string();
+        m_stringValue = node.attribute(valueAttribute).as_string();
         m_type = Type::File;
+        return;
+    }
+    else if (attribData == "object")
+    {
+        m_intValue = node.attribute(valueAttribute).as_int(0);
+        m_type = Type::Object;
         return;
     }
 }
